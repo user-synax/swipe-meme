@@ -28,7 +28,7 @@ export async function POST(req) {
     // Upload to Cloudinary
     const result = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'mememate_avatars' },
+        { folder: 'swipememe_avatars' },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);

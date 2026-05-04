@@ -49,7 +49,7 @@ export default function RegisterPage() {
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">Create Account</h2>
-        <p className="text-sm text-muted-foreground">Join the MemeMate community</p>
+        <p className="text-sm text-muted-foreground">Join the SwipeMeme community</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

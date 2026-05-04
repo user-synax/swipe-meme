@@ -11,16 +11,16 @@ export async function POST(req) {
 
     // Validation
     if (!username || !email || !password) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing fields', code: 'MISSING_FIELDS' }, { status: 400 });
     }
     if (password.length < 6) {
-      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
+      return NextResponse.json({ error: 'Password must be at least 6 characters', code: 'INVALID_PASSWORD' }, { status: 400 });
     }
 
     // Check if user exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+      return NextResponse.json({ error: 'User already exists', code: 'USER_EXISTS' }, { status: 400 });
     }
 
     // Hash password

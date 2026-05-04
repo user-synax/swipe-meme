@@ -7,19 +7,16 @@ import { User as UserIcon, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from '@/store/useToastStore';
-import { useEffect } from 'react';
+import { useEffect, use } from 'react';
 
 export default function UserProfilePage({ params }) {
-  const { id } = params;
-  const { token } = useAuthStore();
+  const { id } = use(params);
   const router = useRouter();
 
   const { data: userData, isLoading: userLoading, error: userError } = useQuery({
     queryKey: ['user', id],
     queryFn: async () => {
-      const res = await fetch(`/api/user/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch(`/api/user/${id}`);
       if (!res.ok) {
         if (res.status === 403) {
           toast.error("Unlock this profile first!");
@@ -36,17 +33,13 @@ export default function UserProfilePage({ params }) {
     queryKey: ['common-memes', id],
     queryFn: async () => {
       // First find the match to get matchId
-      const resList = await fetch('/api/match/list', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const resList = await fetch('/api/match/list');
       const dataList = await resList.json();
       const match = dataList.matches.find(m => m.user._id === id);
       
       if (!match) return { commonMemes: [] };
 
-      const resCommon = await fetch(`/api/match/common/${match._id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const resCommon = await fetch(`/api/match/common/${match._id}`);
       return resCommon.json();
     },
     enabled: !!userData

@@ -8,7 +8,7 @@ import { LogOut, User as UserIcon, Camera, Edit2, Check, X as XIcon } from 'luci
 import { Input } from '@/components/ui/input';
 
 export default function ProfilePage() {
-  const { user, logout, token, setUser } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bio, setBio] = useState(user?.bio || '');
   const [isUploading, setIsUnloading] = useState(false);
@@ -18,9 +18,7 @@ export default function ProfilePage() {
   const { data: matchesData } = useQuery({
     queryKey: ['matches'],
     queryFn: async () => {
-      const res = await fetch('/api/match/list', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch('/api/match/list');
       return res.json();
     }
   });
@@ -30,8 +28,7 @@ export default function ProfilePage() {
       const res = await fetch('/api/user/profile', {
         method: 'PATCH',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(newData)
       });
@@ -54,7 +51,6 @@ export default function ProfilePage() {
     try {
       const res = await fetch('/api/user/avatar', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       });
       const data = await res.json();

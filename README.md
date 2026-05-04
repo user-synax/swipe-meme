@@ -1,8 +1,8 @@
-# 🚀 MemeMate — Swipe. Match. Laugh.
+# 🚀 SwipeMeme — Swipe. Match. Laugh.
 
 <div align="center">
 
-![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Singleton-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-Smooth-ff4458?style=for-the-badge&logo=framer&logoColor=white)
@@ -16,15 +16,15 @@
 
 ## ✨ The Vibe
 
-MemeMate is a humor-first matching platform built for the chronically online. We don't care about your "hiking photos" or your "golden retriever energy." We care if you laugh at the same brainrot we do. 
+SwipeMeme is a humor-first matching platform built for the chronically online. We don't care about your "hiking photos" or your "golden retriever energy." We care if you laugh at the same brainrot we do. 
 
-Built with a **Pinterest-inspired warm light theme**, MemeMate offers a tactile, premium experience that focuses entirely on the content.
+Built with a **Pinterest-inspired warm light theme**, SwipeMeme offers a tactile, premium experience that focuses entirely on the content.
 
 ---
 
 ## 🛠️ The Tech Stack (High-Key Cracked)
 
-- **Frontend**: Next.js 15 (App Router) + JavaScript
+- **Frontend**: Next.js 16 (App Router) + JavaScript
 - **State Management**: Zustand (Auth & Global UI)
 - **Data Fetching**: Tanstack Query (Infinite feed logic)
 - **Animations**: Framer Motion (Spring-based card deck & 3D flip reveals)
@@ -51,7 +51,7 @@ Privacy is key. Matches start blurred. See their humor match percentage first, t
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/your-username/mememate.git
+   git clone https://github.com/your-username/swipememe.git
    ```
 
 2. **Setup Env**

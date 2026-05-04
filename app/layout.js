@@ -5,10 +5,10 @@ import Providers from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "MemeMate — Find Your Humor Twin",
+  title: "SwipeMeme — Find Your Humor Twin",
   description: "Swipe memes, match with people who share your humor, and unlock profiles. The only dating app that actually knows if you're funny.",
   openGraph: {
-    title: "MemeMate — Find Your Humor Twin",
+    title: "SwipeMeme — Find Your Humor Twin",
     description: "Swipe memes, match with people who share your humor, and unlock profiles.",
     images: [{ url: '/og-image.png' }], // Placeholder for now
   },

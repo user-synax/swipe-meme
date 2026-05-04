@@ -11,15 +11,12 @@ import { Skeleton } from '@/components/ui/skeleton/Skeleton';
 import { useState } from 'react';
 
 export default function MatchesPage() {
-  const { token } = useAuthStore();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ['matches'],
     queryFn: async () => {
-      const res = await fetch('/api/match/list', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch('/api/match/list');
       if (!res.ok) throw new Error('Failed to fetch matches');
       return res.json();
     }
@@ -30,8 +27,7 @@ export default function MatchesPage() {
       const res = await fetch('/api/match/unlock', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ matchId })
       });
@@ -71,7 +67,7 @@ export default function MatchesPage() {
             <Heart className="text-muted-foreground" size={32} />
           </div>
           <p className="text-lg font-medium text-foreground">No matches yet.</p>
-          <p className="text-sm">Keep swiping to find your humor mate!</p>
+          <p className="text-sm text-muted-foreground">Keep swiping — your people are out there.</p>
           <Link href="/feed">
             <Button className="mt-6 bg-primary hover:bg-primary/90 rounded-xl px-8 font-bold shadow-lg shadow-primary/20">
               Start Swiping

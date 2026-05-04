@@ -62,8 +62,8 @@ export default function MemeCard({ meme, onSwipe, active }) {
 
       {/* Meme Image Container */}
       <div 
-        className="relative w-full bg-muted/20 min-h-[300px] max-h-[70vh] overflow-hidden"
-        style={{ aspectRatio: aspectRatio }}
+        className="relative w-full bg-muted/5 flex items-center justify-center min-h-[300px] max-h-[60vh]"
+        style={{ aspectRatio: aspectRatio > 0 ? aspectRatio : 4/5 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
@@ -78,24 +78,26 @@ export default function MemeCard({ meme, onSwipe, active }) {
           }}
           className="w-full h-full object-contain pointer-events-none"
         />
-        
-        {/* Info Overlay (Bottom Gradient) */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-          <h3 className="text-white font-bold text-lg mb-2 line-clamp-2 tracking-tight leading-tight">{meme.title}</h3>
-          <div className="flex flex-wrap gap-1.5">
-            {meme.tags.map((tag) => (
-              <button 
-                key={tag} 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTag(tag);
-                }}
-                className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-[10px] font-bold rounded border border-white/10 hover:bg-white/40 transition-colors pointer-events-auto"
-              >
-                #{tag}
-              </button>
-            ))}
-          </div>
+      </div>
+
+      {/* Info Section (Below Image) */}
+      <div className="p-5 bg-card border-t border-border/50">
+        <h3 className="text-foreground font-bold text-lg mb-3 line-clamp-3 tracking-tight leading-snug">
+          {meme.title}
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {meme.tags.map((tag) => (
+            <button 
+              key={tag} 
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTag(tag);
+              }}
+              className="px-2.5 py-1 bg-primary/5 hover:bg-primary/10 text-primary text-[11px] font-black rounded-lg border border-primary/10 transition-all pointer-events-auto uppercase tracking-wider"
+            >
+              #{tag}
+            </button>
+          ))}
         </div>
       </div>
     </motion.div>

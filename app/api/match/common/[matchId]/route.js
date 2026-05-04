@@ -15,7 +15,7 @@ export async function GET(req, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { matchId } = params;
+    const { matchId } = await params;
 
     const match = await Match.findById(matchId);
     if (!match) {

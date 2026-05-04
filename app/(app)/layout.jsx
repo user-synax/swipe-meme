@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import BottomNav from '@/components/nav/BottomNav';
+import OfflineBanner from '@/components/OfflineBanner';
 
 export default function AppLayout({ children }) {
   const { user, isLoading } = useAuthStore();
@@ -27,6 +28,7 @@ export default function AppLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-background pb-20">
+      <OfflineBanner />
       {children}
       <BottomNav />
     </div>

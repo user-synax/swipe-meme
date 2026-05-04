@@ -10,19 +10,19 @@ export async function POST(req) {
     const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing fields', code: 'MISSING_FIELDS' }, { status: 400 });
     }
 
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials', code: 'AUTH_FAILED' }, { status: 401 });
     }
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid credentials', code: 'AUTH_FAILED' }, { status: 401 });
     }
 
     // Generate JWT
