@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, User, MessageSquare } from 'lucide-react';
+import { Home, Heart, User, MessageSquare, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -56,6 +56,7 @@ export default function BottomNav() {
     { href: '/feed', icon: Home, label: 'Feed' },
     { href: '/matches', icon: Heart, label: 'Matches' },
     { href: '/chat', icon: MessageSquare, label: 'Chat', badge: unreadCount },
+    { href: '/about', icon: Info, label: 'About' },
     { href: '/profile', icon: User, label: 'Profile' },
   ];
 

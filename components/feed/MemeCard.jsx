@@ -37,13 +37,13 @@ export default function MemeCard({ meme, onSwipe, active }) {
 
   return (
     <motion.div
-      style={{ x, rotate, opacity, position: 'absolute' }}
+      style={{ x, rotate, opacity }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
       onTap={handleTap}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="w-full max-w-[400px] bg-card rounded-2xl border border-border overflow-hidden cursor-grab active:cursor-grabbing touch-none shadow-md flex flex-col"
+      className="w-[95%] max-w-[550px] bg-card rounded-2xl border border-border overflow-hidden cursor-grab active:cursor-grabbing touch-none shadow-md flex flex-col max-h-[calc(100vh-220px)]"
     >
       {/* Overlay Icons */}
       <motion.div 
@@ -61,10 +61,7 @@ export default function MemeCard({ meme, onSwipe, active }) {
       </motion.div>
 
       {/* Meme Image Container */}
-      <div 
-        className="relative w-full bg-muted/5 flex items-center justify-center min-h-[300px] max-h-[60vh]"
-        style={{ aspectRatio: aspectRatio > 0 ? aspectRatio : 4/5 }}
-      >
+      <div className="relative w-full bg-muted/5 flex items-center justify-center flex-1 min-h-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
           src={meme.imageUrl} 
@@ -76,24 +73,24 @@ export default function MemeCard({ meme, onSwipe, active }) {
               setAspectRatio(naturalWidth / naturalHeight);
             }
           }}
-          className="w-full h-full object-contain pointer-events-none"
+          className="max-w-full max-h-[calc(100vh-300px)] w-auto h-auto object-contain pointer-events-none"
         />
       </div>
 
       {/* Info Section (Below Image) */}
-      <div className="p-5 bg-card border-t border-border/50">
-        <h3 className="text-foreground font-bold text-lg mb-3 line-clamp-3 tracking-tight leading-snug">
+      <div className="p-4 bg-card border-t border-border/50 shrink-0">
+        <h3 className="text-foreground font-bold text-base mb-2 line-clamp-2 tracking-tight leading-snug">
           {meme.title}
         </h3>
-        <div className="flex flex-wrap gap-2">
-          {meme.tags.map((tag) => (
+        <div className="flex flex-wrap gap-1.5">
+          {meme.tags.slice(0, 3).map((tag) => (
             <button 
               key={tag} 
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedTag(tag);
               }}
-              className="px-2.5 py-1 bg-primary/5 hover:bg-primary/10 text-primary text-[11px] font-black rounded-lg border border-primary/10 transition-all pointer-events-auto uppercase tracking-wider"
+              className="px-2 py-0.5 bg-primary/5 hover:bg-primary/10 text-primary text-[10px] font-black rounded border border-primary/10 transition-all pointer-events-auto uppercase tracking-wider"
             >
               #{tag}
             </button>

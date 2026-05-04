@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, X, RefreshCw, User as UserIcon, Filter } from 'lucide-react';
+import { Heart, X, RefreshCw, Filter } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -122,35 +122,27 @@ export default function FeedPage() {
   const isExhausted = currentIndex >= memes.length;
 
   return (
-    <div className="h-[calc(100vh-80px)] flex flex-col items-center overflow-hidden bg-background">
-      {/* Top Bar */}
-      <header className="w-full px-6 py-4 flex justify-between items-center bg-background/80 backdrop-blur-md z-40 border-b border-border/50">
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-black text-primary italic tracking-tighter">SWIPEMEME</h1>
-          {selectedTag && (
-            <div className="flex items-center gap-1 mt-1">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-                <Filter size={10} /> Filtering: #{selectedTag}
-              </span>
-              <button 
-                onClick={() => {
-                  setSelectedTag(null);
-                  setCurrentIndex(0);
-                }}
-                className="text-[10px] font-bold text-primary hover:underline ml-1"
-              >
-                Clear
-              </button>
-            </div>
-          )}
+    <div className="h-[calc(100vh-80px)] flex flex-col items-center overflow-hidden bg-background mb-16">
+      {/* Filter indicator */}
+      {selectedTag && (
+        <div className="w-full px-4 py-2 flex items-center justify-center gap-2 bg-primary/5 border-b border-border/30">
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <Filter size={12} /> Filtering: #{selectedTag}
+          </span>
+          <button 
+            onClick={() => {
+              setSelectedTag(null);
+              setCurrentIndex(0);
+            }}
+            className="text-xs font-bold text-primary hover:underline"
+          >
+            Clear
+          </button>
         </div>
-        <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors">
-          <UserIcon className="text-muted-foreground" size={20} />
-        </div>
-      </header>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 w-full flex flex-col items-center justify-center relative px-4 py-6 overflow-y-auto sm:overflow-hidden">
+      <main className="flex-1 w-full flex flex-col items-center justify-center relative px-4 overflow-hidden">
         <AnimatePresence mode="wait">
           {isExhausted ? (
             <motion.div 
@@ -178,11 +170,11 @@ export default function FeedPage() {
               </Button>
             </motion.div>
           ) : (
-            <div className="relative w-full max-w-[420px] flex items-center justify-center min-h-[500px] sm:min-h-[600px]">
+            <div className="relative w-full flex items-center justify-center h-full max-h-full">
               {/* Next card hint */}
               {currentIndex + 1 < memes.length && (
                 <div 
-                  className="absolute w-full h-full bg-card rounded-2xl border border-border scale-[0.98] translate-y-2 opacity-30 shadow-sm"
+                  className="absolute w-[90%] max-w-[550px] h-full max-h-full bg-card rounded-2xl border border-border scale-[0.95] translate-y-1 opacity-30 shadow-sm"
                   style={{ zIndex: 0 }}
                 />
               )}
@@ -201,18 +193,18 @@ export default function FeedPage() {
 
       {/* Action Buttons */}
       {!isExhausted && (
-        <div className="flex gap-8 mb-8 z-40 mt-4">
+        <div className="flex gap-8 pb-6 z-40 pt-2">
           <Button
             onClick={() => handleSwipe('dislike')}
-            className="w-16 h-16 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-muted-foreground/30 transition-all group shadow-sm"
+            className="w-14 h-14 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-muted-foreground/30 transition-all group shadow-sm"
           >
-            <X size={32} className="text-muted-foreground group-hover:scale-110 transition-transform" />
+            <X size={28} className="text-muted-foreground group-hover:scale-110 transition-transform" />
           </Button>
           <Button
             onClick={() => handleSwipe('like')}
-            className="w-16 h-16 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-primary/30 transition-all group shadow-sm"
+            className="w-14 h-14 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-primary/30 transition-all group shadow-sm"
           >
-            <Heart size={32} className="text-primary fill-primary group-hover:scale-110 transition-transform" />
+            <Heart size={28} className="text-primary fill-primary group-hover:scale-110 transition-transform" />
           </Button>
         </div>
       )}
