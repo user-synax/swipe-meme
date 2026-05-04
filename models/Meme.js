@@ -1,9 +1,18 @@
 import mongoose from 'mongoose';
 
 const MemeSchema = new mongoose.Schema({
+  redditId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   imageUrl: {
     type: String,
     required: true,
+  },
+  title: {
+    type: String,
+    default: '',
   },
   tags: {
     type: [String],
@@ -12,9 +21,9 @@ const MemeSchema = new mongoose.Schema({
   pool: {
     type: String,
     enum: ['trending', 'category'],
-    default: 'trending',
+    default: 'category',
   },
-  likes: {
+  upvotes: {
     type: Number,
     default: 0,
   },
