@@ -10,6 +10,8 @@
 **The only dating app that actually knows if you're funny.**  
 *Stop swiping on faces, start swiping on humor.*
 
+🔗 **Live Demo**: [https://swipe-meme.vercel.app](https://swipe-meme.vercel.app)
+
 </div>
 
 ---
