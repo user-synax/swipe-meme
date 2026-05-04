@@ -1,11 +1,14 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ToastContainer from '@/components/ui/toast/ToastContainer';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function Providers({ children }) {
+  const initFromCookie = useAuthStore((state) => state.initFromCookie);
+  
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
@@ -15,6 +18,10 @@ export default function Providers({ children }) {
       },
     },
   }));
+
+  useEffect(() => {
+    initFromCookie();
+  }, [initFromCookie]);
 
   return (
     <ErrorBoundary>

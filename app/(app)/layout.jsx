@@ -6,12 +6,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import BottomNav from '@/components/nav/BottomNav';
 
 export default function AppLayout({ children }) {
-  const { user, isLoading, initFromCookie } = useAuthStore();
+  const { user, isLoading } = useAuthStore();
   const router = useRouter();
-
-  useEffect(() => {
-    initFromCookie();
-  }, [initFromCookie]);
 
   useEffect(() => {
     if (!isLoading && !user) {

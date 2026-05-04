@@ -5,12 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export default function Home() {
-  const { user, isLoading, initFromCookie } = useAuthStore();
+  const { user, isLoading } = useAuthStore();
   const router = useRouter();
-
-  useEffect(() => {
-    initFromCookie();
-  }, [initFromCookie]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -23,8 +19,8 @@ export default function Home() {
   }, [user, isLoading, router]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-[#ff4458] border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 }
