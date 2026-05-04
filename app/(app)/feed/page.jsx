@@ -12,30 +12,32 @@ import { toast } from '@/store/useToastStore';
 
 export default function FeedPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const { user, selectedTag, setSelectedTag } = useAuthStore();
   const queryClient = useQueryClient();
   const lastMatchCheckRef = useRef(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 1. Fetch Feed
   const { data, isLoading, isError, refetch, isFetching } = useQuery({
     queryKey: ['feed', selectedTag],
     queryFn: async () => {
-      const url = new URL('/api/memes/feed', window.location.origin);
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const url = new URL('/api/memes/feed', origin || 'http://localhost:3000');
       if (selectedTag) url.searchParams.set('tag', selectedTag);
-      
+
       const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch feed');
       return res.json();
     },
     staleTime: 0,
+    enabled: mounted,
   });
 
   const memes = data?.memes || [];
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // 2. Swipe Mutation
   const swipeMutation = useMutation({
