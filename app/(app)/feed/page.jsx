@@ -12,7 +12,7 @@ import { toast } from '@/store/useToastStore';
 
 export default function FeedPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { user, token, selectedTag, setSelectedTag } = useAuthStore();
+  const { user, selectedTag, setSelectedTag } = useAuthStore();
   const queryClient = useQueryClient();
   const lastMatchCheckRef = useRef(0);
 
@@ -23,9 +23,7 @@ export default function FeedPage() {
       const url = new URL('/api/memes/feed', window.location.origin);
       if (selectedTag) url.searchParams.set('tag', selectedTag);
       
-      const res = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch feed');
       return res.json();
     },
@@ -33,6 +31,11 @@ export default function FeedPage() {
   });
 
   const memes = data?.memes || [];
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 2. Swipe Mutation
   const swipeMutation = useMutation({
@@ -40,8 +43,7 @@ export default function FeedPage() {
       const res = await fetch('/api/memes/swipe', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ memeRedditId, imageUrl, tags, action }),
       });
@@ -55,8 +57,7 @@ export default function FeedPage() {
         if (now - lastMatchCheckRef.current > 30000) {
           lastMatchCheckRef.current = now;
           fetch('/api/match/check', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
+            method: 'POST'
           }).then(res => res.json()).then(data => {
             if (data.checked && !data.skipped) {
               toast.success("New Match Found! 🎉", 5000);
@@ -97,7 +98,7 @@ export default function FeedPage() {
   }, [handleSwipe]);
 
   // Loading State (Skeleton)
-  if (isLoading || (isFetching && memes.length === 0)) {
+  if (!mounted || isLoading || (isFetching && memes.length === 0)) {
     return (
       <div className="h-[calc(100vh-80px)] flex flex-col items-center bg-background">
         <header className="w-full px-6 py-4 flex justify-between items-center border-b border-border/50">
@@ -118,7 +119,7 @@ export default function FeedPage() {
       {/* Top Bar */}
       <header className="w-full px-6 py-4 flex justify-between items-center bg-background/80 backdrop-blur-md z-40 border-b border-border/50">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-black text-primary italic tracking-tighter">MEMEMATE</h1>
+          <h1 className="text-2xl font-black text-primary italic tracking-tighter">SWIPEMEME</h1>
           {selectedTag && (
             <div className="flex items-center gap-1 mt-1">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
@@ -142,22 +143,22 @@ export default function FeedPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full flex flex-col items-center justify-center relative px-4 max-h-[75vh]">
-        <AnimatePresence>
+      <main className="flex-1 w-full flex flex-col items-center justify-center relative px-4 py-6 overflow-y-auto sm:overflow-hidden">
+        <AnimatePresence mode="wait">
           {isExhausted ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center space-y-4 z-10"
+              className="text-center space-y-4 z-10 py-12"
             >
               <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                  <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-foreground">Out of memes!</h2>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Out of memes!</h2>
               <p className="text-muted-foreground max-w-[250px] mx-auto text-sm">
-                {selectedTag ? `No more memes for #${selectedTag}. Try another tag!` : "Come back tomorrow for fresh memes or refresh your feed."}
+                {selectedTag ? `No more memes for #${selectedTag}. Try another tag!` : "Come back tomorrow for fresh memes."}
               </p>
               <Button 
                 onClick={() => {
@@ -170,11 +171,11 @@ export default function FeedPage() {
               </Button>
             </motion.div>
           ) : (
-            <div className="relative w-full max-w-[400px] flex items-center justify-center min-h-[500px]">
+            <div className="relative w-full max-w-[420px] flex items-center justify-center min-h-[500px] sm:min-h-[600px]">
               {/* Next card hint */}
               {currentIndex + 1 < memes.length && (
                 <div 
-                  className="absolute w-full h-[500px] bg-card rounded-2xl border border-border scale-[0.95] translate-y-4 opacity-30 shadow-sm"
+                  className="absolute w-full h-full bg-card rounded-2xl border border-border scale-[0.98] translate-y-2 opacity-30 shadow-sm"
                   style={{ zIndex: 0 }}
                 />
               )}
@@ -193,7 +194,7 @@ export default function FeedPage() {
 
       {/* Action Buttons */}
       {!isExhausted && (
-        <div className="flex gap-8 mb-12 z-40 mt-auto">
+        <div className="flex gap-8 mb-8 z-40 mt-4">
           <Button
             onClick={() => handleSwipe('dislike')}
             className="w-16 h-16 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-muted-foreground/30 transition-all group shadow-sm"
