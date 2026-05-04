@@ -56,6 +56,8 @@ export default function ChatPage({ params }) {
     const channel = pusherClient.subscribe(`match-${matchId}`);
     channel.bind('new-message', (data) => {
       setMessages((prev) => {
+        // Ignore own messages (we handle them optimistically)
+        if (data.senderId === match?.currentUser?.id) return prev;
         // Deduplicate by _id
         if (prev.some((m) => m._id === data._id)) return prev;
         return [...prev, data];
@@ -65,7 +67,7 @@ export default function ChatPage({ params }) {
     return () => {
       pusherClient.unsubscribe(`match-${matchId}`);
     };
-  }, [matchId]);
+  }, [matchId, match?.currentUser?.id]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -87,13 +89,18 @@ export default function ChatPage({ params }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Optimistic update already done, just clear input
+      // Replace optimistic message with real server message
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id.startsWith('temp-') ? { ...data, senderId: match?.currentUser?.id } : msg
+        )
+      );
       setText('');
       inputRef.current?.focus();
     },
     onError: () => {
       // Revert optimistic update on error
-      setMessages((prev) => prev.slice(0, -1));
+      setMessages((prev) => prev.filter((msg) => !msg._id.startsWith('temp-')));
     },
   });
 
