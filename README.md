@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 MemeMate — Swipe. Match. Laugh.
 
-## Getting Started
+<div align="center">
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Singleton-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-Smooth-ff4458?style=for-the-badge&logo=framer&logoColor=white)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**The only dating app that actually knows if you're funny.**  
+*Stop swiping on faces, start swiping on humor.*
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</div>
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ The Vibe
 
-## Learn More
+MemeMate is a humor-first matching platform built for the chronically online. We don't care about your "hiking photos" or your "golden retriever energy." We care if you laugh at the same brainrot we do. 
 
-To learn more about Next.js, take a look at the following resources:
+Built with a **Pinterest-inspired warm light theme**, MemeMate offers a tactile, premium experience that focuses entirely on the content.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ The Tech Stack (High-Key Cracked)
 
-## Deploy on Vercel
+- **Frontend**: Next.js 15 (App Router) + JavaScript
+- **State Management**: Zustand (Auth & Global UI)
+- **Data Fetching**: Tanstack Query (Infinite feed logic)
+- **Animations**: Framer Motion (Spring-based card deck & 3D flip reveals)
+- **Backend**: MongoDB + Mongoose (Jaccard Similarity Matching)
+- **Auth**: Pure JWT with `httpOnly` Cookies (No NextAuth, zero overhead)
+- **Media**: Cloudinary (Avatar streaming)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧠 Smart Features
+
+### 🃏 The Humor Engine
+Our custom `getHumorType` logic analyzes your likes in real-time. Whether you're a **Dark Lord**, **Debug Wizard**, or a **Certified Softie**, your profile automatically reflects your soul's true humor.
+
+### 🤝 Jaccard Similarity Matching
+We don't just "match" you. We calculate the mathematical intersection of your meme history. You only match if your humor overlap is > 25%. Science, but make it funny.
+
+### 🕵️ Profile Reveal Flow
+Privacy is key. Matches start blurred. See their humor match percentage first, then choose to **Flip the Card** to reveal their true identity and common liked memes.
+
+---
+
+## 🚀 Quick Start
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/your-username/mememate.git
+   ```
+
+2. **Setup Env**
+   Create a `.env.local` file:
+   ```env
+   MONGODB_URI=
+   JWT_SECRET=
+   CLOUDINARY_CLOUD_NAME=
+   CLOUDINARY_API_KEY=
+   CLOUDINARY_API_SECRET=
+   ```
+
+3. **Install & Run**
+   ```bash
+   npm install --legacy-peer-deps
+   npm run dev
+   ```
+
+---
+
+## 💅 Design System (Strictly Followed)
+
+- **Background**: `#ffffff` (Warm White)
+- **Accent**: `#e60023` (Pinterest Red)
+- **Typography**: Inter (Google Fonts)
+- **Radius**: `16px` (Generous, not pill)
+
+---
+
+<div align="center">
+
+### Built with ❤️ for the GenZ Humor.
+*No mid code allowed.*
+
+</div>
