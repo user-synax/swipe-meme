@@ -15,8 +15,6 @@ const MemeCard = dynamic(() => import('@/components/feed/MemeCard'), {
   loading: () => <Skeleton className="w-full max-w-[400px] h-[500px] rounded-2xl" />
 });
 
-export const dynamic = 'force-dynamic';
-
 export default function FeedPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
