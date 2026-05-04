@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Heart, Lock, User as UserIcon } from 'lucide-react';
+import { Heart, Lock, User as UserIcon, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton/Skeleton';
@@ -165,15 +165,23 @@ function MatchCard({ match, onUnlock, isUnlocking }) {
               Common Memes: {match.commonMemeUrls?.length || 0}
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-2">
               {chatUnlocked ? (
-                <Link href={`/user/${user._id}`}>
-                  <Button variant="outline" className="w-full text-[11px] font-bold h-8 rounded-lg border-border hover:bg-muted transition-colors">
-                    View Profile
-                  </Button>
-                </Link>
+                <>
+                  <Link href={`/chat/${match._id}`}>
+                    <Button className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95">
+                      <MessageSquare size={14} className="mr-1.5" />
+                      Chat
+                    </Button>
+                  </Link>
+                  <Link href={`/user/${user._id}`}>
+                    <Button variant="outline" className="w-full text-[11px] font-bold h-8 rounded-lg border-border hover:bg-muted transition-colors">
+                      View Profile
+                    </Button>
+                  </Link>
+                </>
               ) : (
-                <Button 
+                <Button
                   onClick={handleUnlock}
                   disabled={isUnlocking}
                   className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95"
