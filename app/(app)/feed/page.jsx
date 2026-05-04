@@ -4,11 +4,18 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, X, RefreshCw, User as UserIcon, Filter } from 'lucide-react';
-import MemeCard from '@/components/feed/MemeCard';
+import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Skeleton } from '@/components/ui/skeleton/Skeleton';
 import { toast } from '@/store/useToastStore';
+
+const MemeCard = dynamic(() => import('@/components/feed/MemeCard'), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full max-w-[400px] h-[500px] rounded-2xl" />
+});
+
+export const dynamic = 'force-dynamic';
 
 export default function FeedPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
