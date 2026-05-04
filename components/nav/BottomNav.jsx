@@ -2,15 +2,55 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, User } from 'lucide-react';
+import { Home, Heart, User, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import pusherClient from '@/lib/pusherClient';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { user } = useAuthStore();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Fetch unread message count
+  const { data: countData } = useQuery({
+    queryKey: ['unread-count'],
+    queryFn: async () => {
+      const res = await fetch('/api/chat/unread-count', {
+        headers: { Cookie: document.cookie },
+      });
+      if (!res.ok) return { count: 0 };
+      return res.json();
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  useEffect(() => {
+    if (countData?.count !== undefined) {
+      setUnreadCount(countData.count);
+    }
+  }, [countData]);
+
+  // Listen for new messages via Pusher
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = pusherClient.subscribe(`user-${user.id}`);
+    channel.bind('new-message', (data) => {
+      setUnreadCount((prev) => prev + 1);
+    });
+
+    return () => {
+      pusherClient.unsubscribe(`user-${user.id}`);
+    };
+  }, [user?.id]);
 
   const navItems = [
     { href: '/feed', icon: Home, label: 'Feed' },
     { href: '/matches', icon: Heart, label: 'Matches' },
+    { href: '/chat', icon: MessageSquare, label: 'Chat', badge: unreadCount },
     { href: '/profile', icon: User, label: 'Profile' },
   ];
 
@@ -19,17 +59,24 @@ export default function BottomNav() {
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
-        
+
         return (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              "flex flex-col items-center gap-1 transition-all duration-200 active:scale-90",
+              "flex flex-col items-center gap-1 transition-all duration-200 active:scale-90 relative",
               isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+            <div className="relative">
+              <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+              {item.badge > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#ff4458] text-[10px] font-bold text-white flex items-center justify-center">
+                  {item.badge > 9 ? '9+' : item.badge}
+                </span>
+              )}
+            </div>
             <span className="text-[10px] font-bold tracking-tight">{item.label}</span>
           </Link>
         );

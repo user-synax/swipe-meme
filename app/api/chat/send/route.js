@@ -50,12 +50,25 @@ export async function POST(req) {
       text: text.trim(),
     });
 
-    // Trigger Pusher event
+    // Trigger Pusher event to match channel
     await pusherServer.trigger(
       `match-${matchId}`,
       'new-message',
       {
         _id: message._id,
+        senderId: userId,
+        text: message.text,
+        createdAt: message.createdAt,
+      }
+    );
+
+    // Trigger notification to recipient's user channel
+    const recipientId = match.userA.toString() === userId ? match.userB.toString() : match.userA.toString();
+    await pusherServer.trigger(
+      `user-${recipientId}`,
+      'new-message',
+      {
+        matchId,
         senderId: userId,
         text: message.text,
         createdAt: message.createdAt,

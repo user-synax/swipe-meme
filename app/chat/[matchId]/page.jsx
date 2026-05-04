@@ -69,6 +69,13 @@ export default function ChatPage({ params }) {
     };
   }, [matchId, match?.currentUser?.id]);
 
+  // Decrement unread count when entering chat (simplified - in production, track read messages)
+  useEffect(() => {
+    if (matchId) {
+      queryClient.invalidateQueries(['unread-count']);
+    }
+  }, [matchId, queryClient]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
