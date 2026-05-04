@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import pusherClient from '@/lib/pusherClient';
@@ -7,7 +7,7 @@ import { ArrowLeft, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ChatPage({ params }) {
-  const { matchId } = params;
+  const { matchId } = use(params);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
