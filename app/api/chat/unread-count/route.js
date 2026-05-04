@@ -27,12 +27,11 @@ export async function GET(req) {
 
     const matchIds = matches.map((m) => m._id);
 
-    // Count unread messages (messages where sender is not current user)
-    // For simplicity, we'll count all messages in unlocked matches
-    // In production, you'd want a "read" field on messages
+    // Count unread messages (messages from others that are not read)
     const unreadCount = await Message.countDocuments({
       matchId: { $in: matchIds },
       senderId: { $ne: userId },
+      read: false,
     });
 
     return NextResponse.json({ count: unreadCount }, { status: 200 });

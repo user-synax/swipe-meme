@@ -69,6 +69,25 @@ export default function ChatPage({ params }) {
     };
   }, [matchId, match?.currentUser?.id]);
 
+  // Mark messages as read when entering chat
+  useEffect(() => {
+    if (matchId) {
+      fetch('/api/chat/mark-read', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: document.cookie,
+        },
+        body: JSON.stringify({ matchId }),
+      }).then(() => {
+        // Refresh unread count after marking as read
+        queryClient.invalidateQueries(['unread-count']);
+      }).catch((err) => {
+        console.error('Failed to mark messages as read:', err);
+      });
+    }
+  }, [matchId, queryClient]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
