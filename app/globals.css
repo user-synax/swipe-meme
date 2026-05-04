@@ -2,20 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 291 16% 11%; /* Plum Black #211922 */
+    --card: 0 0% 100%;
+    --card-foreground: 291 16% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 291 16% 11%;
+    --primary: 351 100% 45%; /* Pinterest Red #e60023 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 9% 89%; /* Sand Gray #e5e5e0 */
+    --secondary-foreground: 291 16% 11%;
+    --muted: 60 8% 87%; /* Warm Light #e0e0d9 */
+    --muted-foreground: 60 4% 37%; /* Olive Gray #62625b */
+    --accent: 60 20% 98%; /* Warm Wash hsla(60,20%,98%,.5) */
+    --accent-foreground: 291 16% 11%;
+    --destructive: 0 88% 33%; /* Error Red #9e0a0a */
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 3% 56%; /* Warm Silver #91918c */
+    --input: 60 3% 56%;
+    --ring: 231 77% 58%; /* Focus Blue #435ee5 */
+    --radius: 1rem; /* 16px standard */
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-color: #ffffff;
+    font-family: 'Inter', sans-serif;
+  }
 }
