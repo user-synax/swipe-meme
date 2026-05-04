@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Skeleton } from '@/components/ui/skeleton/Skeleton';
+import Skeleton from '@/components/ui/skeleton/Skeleton';
 import Link from 'next/link';
 
 export default function ChatListPage() {

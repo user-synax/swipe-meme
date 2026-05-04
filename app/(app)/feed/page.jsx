@@ -7,7 +7,7 @@ import { Heart, X, RefreshCw, User as UserIcon, Filter } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Skeleton } from '@/components/ui/skeleton/Skeleton';
+import Skeleton from '@/components/ui/skeleton/Skeleton';
 import { toast } from '@/store/useToastStore';
 
 const MemeCard = dynamic(() => import('@/components/feed/MemeCard'), {

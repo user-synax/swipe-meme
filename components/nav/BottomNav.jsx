@@ -6,25 +6,27 @@ import { Home, Heart, User, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import pusherClient from '@/lib/pusherClient';
 import { useAuthStore } from '@/store/useAuthStore';
+import dynamic from 'next/dynamic';
 
 export default function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Fetch unread message count
+  // Fetch unread message count with proper SSR handling
   const { data: countData } = useQuery({
     queryKey: ['unread-count'],
     queryFn: async () => {
-      const res = await fetch('/api/chat/unread-count', {
-        headers: { Cookie: document.cookie },
-      });
+      // Only run on client side
+      if (typeof window === 'undefined') return { count: 0 };
+      
+      const res = await fetch('/api/chat/unread-count');
       if (!res.ok) return { count: 0 };
       return res.json();
     },
     refetchInterval: 30000, // Refetch every 30 seconds
+    enabled: typeof window !== 'undefined',
   });
 
   useEffect(() => {
@@ -33,18 +35,21 @@ export default function BottomNav() {
     }
   }, [countData]);
 
-  // Listen for new messages via Pusher
+  // Listen for new messages via Pusher with dynamic import
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || typeof window === 'undefined') return;
 
-    const channel = pusherClient.subscribe(`user-${user.id}`);
-    channel.bind('new-message', (data) => {
-      setUnreadCount((prev) => prev + 1);
+    // Dynamically import pusher client to avoid SSR issues
+    import('@/lib/pusherClient').then(({ default: pusherClient }) => {
+      const channel = pusherClient.subscribe(`user-${user.id}`);
+      channel.bind('new-message', (data) => {
+        setUnreadCount((prev) => prev + 1);
+      });
+
+      return () => {
+        pusherClient.unsubscribe(`user-${user.id}`);
+      };
     });
-
-    return () => {
-      pusherClient.unsubscribe(`user-${user.id}`);
-    };
   }, [user?.id]);
 
   const navItems = [

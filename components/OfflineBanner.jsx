@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+// Dynamically import framer-motion to avoid SSR issues
+const AnimatePresence = dynamic(() => import('framer-motion').then((mod) => mod.AnimatePresence), { ssr: false });
+const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
 export default function OfflineBanner() {
   const [isOffline, setIsOffline] = useState(false);
@@ -20,12 +24,12 @@ export default function OfflineBanner() {
     };
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || !isOffline) return null;
 
   return (
     <AnimatePresence>
       {isOffline && (
-        <motion.div
+        <MotionDiv
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           exit={{ y: -100 }}
@@ -33,7 +37,7 @@ export default function OfflineBanner() {
         >
           <WifiOff size={16} />
           You are currently offline. Some features may not work.
-        </motion.div>
+        </MotionDiv>
       )}
     </AnimatePresence>
   );

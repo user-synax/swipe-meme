@@ -6,12 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Heart, Lock, User as UserIcon, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
+import { motion, AnimatePresence } from 'framer-motion';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
 import { useState } from 'react';
-
-// Dynamically import framer-motion to avoid SSR issues
-const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
 export default function MatchesPage() {
   const queryClient = useQueryClient();
@@ -61,9 +58,7 @@ export default function MatchesPage() {
       <h1 className="text-3xl font-black text-foreground mb-8 tracking-tighter">Your Matches</h1>
       
       {matches.length === 0 ? (
-        <MotionDiv 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div 
           className="bg-card border border-border rounded-2xl p-12 text-center text-muted-foreground shadow-sm"
         >
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
@@ -76,16 +71,17 @@ export default function MatchesPage() {
               Start Swiping
             </Button>
           </Link>
-        </MotionDiv>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">
           {matches.map((match) => (
-            <MatchCard 
-              key={match._id}
-              match={match} 
-              onUnlock={() => unlockMutation.mutate(match._id)}
-              isUnlocking={unlockMutation.isPending && unlockMutation.variables === match._id}
-            />
+            <div key={match._id}>
+              <MatchCard 
+                match={match} 
+                onUnlock={() => unlockMutation.mutate(match._id)}
+                isUnlocking={unlockMutation.isPending && unlockMutation.variables === match._id}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -110,63 +106,65 @@ function MatchCard({ match, onUnlock, isUnlocking }) {
   };
 
   return (
-    <Card className="overflow-hidden bg-card border-border shadow-sm flex flex-col">
-      <div className="relative aspect-square bg-muted flex items-center justify-center overflow-hidden">
-        {user.avatar ? (
-          <img 
-            src={user.avatar} 
-            alt={displayUsername}
-            className={`w-full h-full object-cover transition-all duration-500 ${!chatUnlocked ? 'blur-xl grayscale' : ''}`}
-          />
-        ) : (
-          <div className={`w-full h-full flex items-center justify-center bg-muted ${!chatUnlocked ? 'blur-md' : ''}`}>
-            <UserIcon className="text-muted-foreground" size={40} />
-          </div>
-        )}
-        
-        {!chatUnlocked && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-            <Lock className="text-white/80 drop-shadow-lg" size={32} />
-          </div>
-        )}
-      </div>
-
-      <div className="p-4 flex-1 flex flex-col space-y-2">
-        <div className="space-y-0.5">
-          <p className="font-bold text-foreground tracking-tight line-clamp-1">{displayUsername}</p>
-          <p className="text-[10px] font-bold text-primary uppercase tracking-wider">{humorMatch}% Humor Match</p>
-        </div>
-
-        <div className="text-[10px] text-muted-foreground font-medium">
-          Common Memes: {match.commonMemeUrls?.length || 0}
-        </div>
-
-        <div className="pt-2 space-y-2">
-          {chatUnlocked ? (
-            <>
-              <Link href={`/chat/${match._id}`}>
-                <Button className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95">
-                  <MessageSquare size={14} className="mr-1.5" />
-                  Chat
-                </Button>
-              </Link>
-              <Link href={`/user/${user._id}`}>
-                <Button variant="outline" className="w-full text-[11px] font-bold h-8 rounded-lg border-border hover:bg-muted transition-colors">
-                  View Profile
-                </Button>
-              </Link>
-            </>
+    <div>
+      <Card className="overflow-hidden bg-card border-border shadow-sm flex flex-col">
+        <div className="relative aspect-square bg-muted flex items-center justify-center overflow-hidden">
+          {user.avatar ? (
+            <img 
+              src={user.avatar} 
+              alt={displayUsername}
+              className={`w-full h-full object-cover transition-all duration-500 ${!chatUnlocked ? 'blur-xl grayscale' : ''}`}
+            />
           ) : (
-            <Button
-              onClick={handleUnlock}
-              disabled={isUnlocking}
-              className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95"
-            >
-              {isUnlocking ? 'Revealing...' : 'Reveal Profile'}
-            </Button>
+            <div className={`w-full h-full flex items-center justify-center bg-muted ${!chatUnlocked ? 'blur-md' : ''}`}>
+              <UserIcon className="text-muted-foreground" size={40} />
+            </div>
+          )}
+          
+          {!chatUnlocked && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+              <Lock className="text-white/80 drop-shadow-lg" size={32} />
+            </div>
           )}
         </div>
-      </div>
-    </Card>
+
+        <div className="p-4 flex-1 flex flex-col space-y-2">
+          <div className="space-y-0.5">
+            <p className="font-bold text-foreground tracking-tight line-clamp-1">{displayUsername}</p>
+            <p className="text-[10px] font-bold text-primary uppercase tracking-wider">{humorMatch}% Humor Match</p>
+          </div>
+
+          <div className="text-[10px] text-muted-foreground font-medium">
+            Common Memes: {match.commonMemeUrls?.length || 0}
+          </div>
+
+          <div className="pt-2 space-y-2">
+            {chatUnlocked ? (
+              <>
+                <Link href={`/chat/${match._id}`}>
+                  <Button className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95">
+                    <MessageSquare size={14} className="mr-1.5" />
+                    Chat
+                  </Button>
+                </Link>
+                <Link href={`/user/${user._id}`}>
+                  <Button variant="outline" className="w-full text-[11px] font-bold h-8 rounded-lg border-border hover:bg-muted transition-colors">
+                    View Profile
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Button
+                onClick={handleUnlock}
+                disabled={isUnlocking}
+                className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95"
+              >
+                {isUnlocking ? 'Revealing...' : 'Reveal Profile'}
+              </Button>
+            )}
+          </div>
+        </div>
+      </Card>
+    </div>
   );
 }
