@@ -23,15 +23,16 @@ export const useAuthStore = create((set) => ({
   },
 
   initFromCookie: async () => {
-    console.log('[AuthStore] Starting initialization...');
     try {
       const res = await fetch('/api/auth/me');
-      console.log('[AuthStore] Auth check status:', res.status);
       
       if (res.ok) {
         const data = await res.json();
-        console.log('[AuthStore] Auth success, user:', data.user?.username);
-        set({ user: data.user, token: null, isLoading: false });
+        set({
+          user: data.user,
+          token: null,
+          isLoading: false
+        });
       } else {
         console.log('[AuthStore] Auth failed (not logged in)');
         set({ user: null, token: null, isLoading: false });
