@@ -7,7 +7,7 @@ import { verifyToken } from '@/lib/auth';
 export async function POST(req) {
   try {
     await connectDB();
-    
+
     let userId;
     try {
       userId = verifyToken(req);
@@ -27,6 +27,13 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Meme already swiped' }, { status: 409 });
     }
 
+    // Fetch user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     // 2. Create Swipe document
     await Swipe.create({
       userId,
@@ -36,29 +43,22 @@ export async function POST(req) {
       action
     });
 
-    let triggerMatchCheck = false;
+    // Update user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: action === 'like' ? { likedRedditIds: memeRedditId } : {},
+        $inc: { swipeCount: 1 }
+      },
+      { new: true }
+    );
 
-    // 3. Update User if liked
-    if (action === 'like') {
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        { 
-          $addToSet: { likedRedditIds: memeRedditId },
-          $inc: { swipeCount: 1 }
-        },
-        { new: true }
-      );
+    const triggerMatchCheck = updatedUser.swipeCount % 15 === 0;
 
-      if (updatedUser.swipeCount % 15 === 0) {
-        triggerMatchCheck = true;
-      }
-    } else {
-      // Still increment swipeCount for dislikes to trigger match check?
-      // The prompt says: "If action === 'like': ... increment User.swipeCount"
-      // So I will only increment and check trigger for likes as per instructions.
-    }
-
-    return NextResponse.json({ success: true, triggerMatchCheck }, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      triggerMatchCheck
+    }, { status: 201 });
   } catch (error) {
     console.error('Swipe API error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
