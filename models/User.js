@@ -39,6 +39,22 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  dailySwipeCount: {
+    type: Number,
+    default: 0,
+  },
+  lastSwipeDate: {
+    type: Date,
+    default: null,
+  },
+  currentStreak: {
+    type: Number,
+    default: 0,
+  },
+  longestStreak: {
+    type: Number,
+    default: 0,
+  },
 }, { timestamps: true });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
