@@ -9,10 +9,14 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import dynamic from 'next/dynamic';
 
+// Dynamically import motion for badge animation
+const MotionSpan = dynamic(() => import('framer-motion').then((mod) => mod.motion.span), { ssr: false });
+
 export default function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [matchUnreadCount, setMatchUnreadCount] = useState(0);
 
   // Fetch unread message count with proper SSR handling
   const { data: countData } = useQuery({
@@ -20,7 +24,7 @@ export default function BottomNav() {
     queryFn: async () => {
       // Only run on client side
       if (typeof window === 'undefined') return { count: 0 };
-      
+
       const res = await fetch('/api/chat/unread-count');
       if (!res.ok) return { count: 0 };
       return res.json();
@@ -29,11 +33,33 @@ export default function BottomNav() {
     enabled: typeof window !== 'undefined',
   });
 
+  // Fetch unread match count with polling
+  const { data: matchCountData } = useQuery({
+    queryKey: ['match-unread-count'],
+    queryFn: async () => {
+      if (typeof window === 'undefined') return { count: 0 };
+
+      const res = await fetch('/api/match/unread');
+      if (!res.ok) return { count: 0 };
+      return res.json();
+    },
+    refetchInterval: 30000,
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    enabled: typeof window !== 'undefined',
+  });
+
   useEffect(() => {
     if (countData?.count !== undefined) {
       setUnreadCount(countData.count);
     }
   }, [countData]);
+
+  useEffect(() => {
+    if (matchCountData?.count !== undefined) {
+      setMatchUnreadCount(matchCountData.count);
+    }
+  }, [matchCountData]);
 
   // Listen for new messages via Pusher with dynamic import
   useEffect(() => {
@@ -54,7 +80,7 @@ export default function BottomNav() {
 
   const navItems = [
     { href: '/feed', icon: Home, label: 'Feed' },
-    { href: '/matches', icon: Heart, label: 'Matches' },
+    { href: '/matches', icon: Heart, label: 'Matches', badge: matchUnreadCount },
     { href: '/chat', icon: MessageSquare, label: 'Chat', badge: unreadCount },
     { href: '/about', icon: Info, label: 'About' },
     { href: '/profile', icon: User, label: 'Profile' },
@@ -78,9 +104,14 @@ export default function BottomNav() {
             <div className="relative">
               <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
               {item.badge > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#ff4458] text-[10px] font-bold text-white flex items-center justify-center">
+                <MotionSpan
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#ff4458] text-[10px] font-bold text-white flex items-center justify-center"
+                >
                   {item.badge > 9 ? '9+' : item.badge}
-                </span>
+                </MotionSpan>
               )}
             </div>
             <span className="text-[10px] font-bold tracking-tight">{item.label}</span>

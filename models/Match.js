@@ -36,6 +36,10 @@ const MatchSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  seenBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
 }, { timestamps: true });
 
 // Compound index on [userA, userB] unique

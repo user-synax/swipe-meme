@@ -8,7 +8,7 @@ import { Heart, Lock, User as UserIcon, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Dynamically import framer-motion to avoid SSR issues
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
@@ -29,7 +29,7 @@ export default function MatchesPage() {
     mutationFn: async (matchId) => {
       const res = await fetch('/api/match/unlock', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ matchId })
@@ -40,6 +40,56 @@ export default function MatchesPage() {
       queryClient.invalidateQueries(['matches']);
     }
   });
+
+  // Mutation to mark a match as seen
+  const markSeenMutation = useMutation({
+    mutationFn: async (matchId) => {
+      const res = await fetch('/api/match/seen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matchId })
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      // Invalidate unread count so badge updates
+      queryClient.invalidateQueries(['match-unread-count']);
+    }
+  });
+
+  const matches = data?.matches || [];
+  const markedRef = useRef(new Set());
+  const processingRef = useRef(false);
+
+  // Mark all loaded matches as seen sequentially to avoid resource exhaustion
+  useEffect(() => {
+    if (isLoading || matches.length === 0 || processingRef.current) return;
+
+    const markMatchesSeen = async () => {
+      processingRef.current = true;
+
+      // Get unseen matches (not already marked in this session)
+      const unseenMatches = matches.filter(m => !markedRef.current.has(m._id));
+
+      // Process sequentially with small delays to avoid overwhelming the browser
+      for (const match of unseenMatches) {
+        if (!markedRef.current.has(match._id)) {
+          markedRef.current.add(match._id);
+          try {
+            await markSeenMutation.mutateAsync(match._id);
+          } catch (err) {
+            // Silent fail - match might already be marked
+          }
+          // Small delay between requests
+          await new Promise(r => setTimeout(r, 50));
+        }
+      }
+
+      processingRef.current = false;
+    };
+
+    markMatchesSeen();
+  }, [isLoading, matches]);
 
   if (isLoading) {
     return (
@@ -53,8 +103,6 @@ export default function MatchesPage() {
       </div>
     );
   }
-
-  const matches = data?.matches || [];
 
   return (
     <div className="p-6 bg-background min-h-screen pb-24">
