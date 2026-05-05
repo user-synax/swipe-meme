@@ -49,13 +49,19 @@ export default function FeedPage() {
     mutationFn: async ({ memeRedditId, imageUrl, tags, action }) => {
       const res = await fetch('/api/memes/swipe', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ memeRedditId, imageUrl, tags, action }),
       });
-      if (!res.ok) throw new Error('Swipe failed');
-      return res.json();
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.code === 'DAILY_LIMIT_EXCEEDED') {
+          throw new Error('DAILY_LIMIT_EXCEEDED');
+        }
+        throw new Error(data.error || 'Swipe failed');
+      }
+      return data;
     },
     onSuccess: (data) => {
       if (data.triggerMatchCheck) {
@@ -123,29 +129,32 @@ export default function FeedPage() {
 
   return (
     <div className="h-[calc(100vh-80px)] flex flex-col items-center overflow-hidden bg-background mb-16">
-      {/* Filter indicator */}
-      {selectedTag && (
-        <div className="w-full px-4 py-2 flex items-center justify-center gap-2 bg-primary/5 border-b border-border/30">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-            <Filter size={12} /> Filtering: #{selectedTag}
-          </span>
-          <button 
-            onClick={() => {
-              setSelectedTag(null);
-              setCurrentIndex(0);
-            }}
-            className="text-xs font-bold text-primary hover:underline"
-          >
-            Clear
-          </button>
-        </div>
-      )}
+      {/* Header */}
+      <header className="w-full px-6 py-3 flex items-center border-b border-border/50">
+        {selectedTag && (
+          <div className="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-full border border-border/30">
+            <Filter size={12} className="text-muted-foreground" />
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              #{selectedTag}
+            </span>
+            <button
+              onClick={() => {
+                setSelectedTag(null);
+                setCurrentIndex(0);
+              }}
+              className="text-xs font-bold text-primary hover:underline ml-1"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+      </header>
 
       {/* Main Content */}
       <main className="flex-1 w-full flex flex-col items-center justify-center relative px-4 overflow-hidden">
         <AnimatePresence mode="wait">
           {isExhausted ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="text-center space-y-4 z-10 py-12"
@@ -159,7 +168,7 @@ export default function FeedPage() {
               <p className="text-muted-foreground max-w-[250px] mx-auto text-sm">
                 {selectedTag ? `No more memes for #${selectedTag}. Try another tag!` : "Come back tomorrow for fresh memes."}
               </p>
-              <Button 
+              <Button
                 onClick={() => {
                   setCurrentIndex(0);
                   refetch();
