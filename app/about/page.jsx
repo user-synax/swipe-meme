@@ -13,7 +13,7 @@ export default function AboutPage() {
     {
       name: 'Sujal Srivastav',
       role: 'Founder & Visionary',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sujal&backgroundColor=b6e3f4',
+      avatar: '/authors/founder.jpeg',
       description: 'The creative mind behind SwipeMeme, Sujal envisioned a platform where humor meets connection. With a passion for bringing people together through shared laughter, he pioneered the concept of meme-based matchmaking.',
       skills: ['Product Strategy', 'Vision', 'Community Building'],
       color: 'from-purple-400 to-pink-400'
@@ -21,7 +21,7 @@ export default function AboutPage() {
     {
       name: 'Ayush',
       role: 'Lead Developer',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ayush&backgroundColor=c0aede',
+      avatar: '/authors/developer.png',
       description: 'The technical architect who brought SwipeMeme to life. Ayush transformed the vision into reality with clean code, innovative features, and a seamless user experience that makes meme matching magical.',
       skills: ['Full-Stack Development', 'React/Next.js', 'System Design'],
       color: 'from-blue-400 to-cyan-400'
@@ -96,7 +96,7 @@ export default function AboutPage() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto px-4">
           {team.map((member, index) => (
             <motion.div
               key={member.name}
@@ -104,32 +104,32 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="group"
+              className="group w-full"
             >
-              <div className="bg-card border border-border rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                {/* Avatar */}
-                <div className="flex justify-center mb-6">
-                  <div className={`w-24 h-24 rounded-full bg-gradient-to-r ${member.color} p-1 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+              <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col min-h-[400px] sm:min-h-[500px]">
+                {/* Avatar - Half the card height, rectangular */}
+                <div className="mb-4 sm:mb-6 flex-1 -mx-4 sm:-mx-6 md:-mx-8">
+                  <div className={`w-full h-full bg-gradient-to-r ${member.color} p-1 shadow-lg group-hover:scale-105 transition-transform duration-300`}>
                     <img
                       src={member.avatar}
                       alt={member.name}
-                      className="w-full h-full rounded-full bg-white"
+                      className="w-full h-full bg-white object-cover"
                     />
                   </div>
                 </div>
 
                 {/* Info */}
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-foreground mb-2">{member.name}</h3>
-                  <p className="text-primary font-semibold mb-4">{member.role}</p>
-                  <p className="text-muted-foreground mb-6 leading-relaxed">{member.description}</p>
+                <div className="text-center flex-1 flex flex-col justify-center px-2 sm:px-0">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-1 sm:mb-2">{member.name}</h3>
+                  <p className="text-primary font-semibold mb-2 sm:mb-4 text-xs sm:text-sm md:text-base">{member.role}</p>
+                  <p className="text-muted-foreground mb-3 sm:mb-6 leading-relaxed text-xs sm:text-sm md:text-base flex-1">{member.description}</p>
                   
                   {/* Skills */}
-                  <div className="flex flex-wrap justify-center gap-2">
+                  <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
                     {member.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium"
+                        className="px-1.5 sm:px-2 md:px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs sm:text-xs md:text-sm font-medium"
                       >
                         {skill}
                       </span>
