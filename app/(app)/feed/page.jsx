@@ -90,6 +90,7 @@ export default function FeedPage() {
     if (currentIndex >= memes.length) return;
 
     const currentMeme = memes[currentIndex];
+    
     swipeMutation.mutate({
       memeRedditId: currentMeme.redditId,
       imageUrl: currentMeme.imageUrl,
