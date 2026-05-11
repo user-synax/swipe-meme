@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
 import { toast } from '@/store/useToastStore';
+import ShareButton from '@/components/feed/ShareButton';
 
 const MemeCard = dynamic(() => import('@/components/feed/MemeCard'), {
   ssr: false,
@@ -203,13 +204,14 @@ export default function FeedPage() {
 
       {/* Action Buttons */}
       {!isExhausted && (
-        <div className="flex gap-8 pb-6 z-40 pt-2">
+        <div className="flex items-center gap-6 pb-6 z-40 pt-2">
           <Button
             onClick={() => handleSwipe('dislike')}
             className="w-14 h-14 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-muted-foreground/30 transition-all group shadow-sm"
           >
             <X size={28} className="text-muted-foreground group-hover:scale-110 transition-transform" />
           </Button>
+          <ShareButton meme={memes[currentIndex]} />
           <Button
             onClick={() => handleSwipe('like')}
             className="w-14 h-14 rounded-full bg-muted border border-border hover:bg-muted/80 hover:border-primary/30 transition-all group shadow-sm"
