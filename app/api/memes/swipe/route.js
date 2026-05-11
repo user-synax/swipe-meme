@@ -15,7 +15,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { memeRedditId, imageUrl, tags, action } = await req.json();
+    const { memeRedditId, imageUrl, tags, action, isSuperLike = false } = await req.json();
 
     if (!memeRedditId || !action) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -40,7 +40,8 @@ export async function POST(req) {
       memeRedditId,
       imageUrl,
       tags,
-      action
+      action,
+      isSuperLike
     });
 
     // Update user
@@ -53,10 +54,14 @@ export async function POST(req) {
       { new: true }
     );
 
-    const triggerMatchCheck = updatedUser.swipeCount % 15 === 0;
+    // Trigger match check more frequently for Super Likes (every 5 instead of 15)
+    const triggerMatchCheck = isSuperLike ? 
+      updatedUser.swipeCount % 5 === 0 : 
+      updatedUser.swipeCount % 15 === 0;
 
     return NextResponse.json({
       success: true,
+      isSuperLike,
       triggerMatchCheck
     }, { status: 201 });
   } catch (error) {

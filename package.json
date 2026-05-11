@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "daily-reset": "node scripts/dailyReset.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.9",

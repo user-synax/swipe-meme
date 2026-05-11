@@ -10,7 +10,7 @@ export const metadata = {
   openGraph: {
     title: "SwipeMeme — Find Your Humor Twin",
     description: "Swipe memes, match with people who share your humor, and unlock profiles.",
-    images: [{ url: '/og-image.png' }], // Placeholder for now
+    images: [{ url: '/og-image.png' }], 
   },
 };
 
