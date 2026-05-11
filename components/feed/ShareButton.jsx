@@ -1,13 +1,17 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Share2, X, Link2, AtSign, Globe, MessageCircle, Send } from 'lucide-react';
+import { Share2, X, Link2, AtSign, Globe, MessageCircle, Send, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/store/useToastStore';
+import dynamic from 'next/dynamic';
+
+const ShareToFriendModal = dynamic(() => import('@/components/friends/ShareToFriendModal'), { ssr: false });
 
 export default function ShareButton({ meme }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isNativeShare, setIsNativeShare] = useState(false);
+  const [showFriendShare, setShowFriendShare] = useState(false);
 
   // Check if native share is available
   const checkNativeShare = useCallback(() => {
@@ -82,6 +86,11 @@ export default function ShareButton({ meme }) {
     setIsOpen(false);
   };
 
+  const shareToFriend = () => {
+    setIsOpen(false);
+    setShowFriendShare(true);
+  };
+
   return (
     <>
       <button
@@ -119,6 +128,12 @@ export default function ShareButton({ meme }) {
               </div>
 
               <div className="grid grid-cols-3 gap-3">
+                <ShareOption
+                  icon={<Users size={20} />}
+                  label="To Friend"
+                  onClick={shareToFriend}
+                  color="bg-primary/10 text-primary hover:bg-primary/20"
+                />
                 <ShareOption
                   icon={<AtSign size={20} />}
                   label="Twitter"
@@ -160,6 +175,13 @@ export default function ShareButton({ meme }) {
           </>
         )}
       </AnimatePresence>
+
+      {showFriendShare && (
+        <ShareToFriendModal
+          meme={meme}
+          onClose={() => setShowFriendShare(false)}
+        />
+      )}
     </>
   );
 }
