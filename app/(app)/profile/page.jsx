@@ -124,6 +124,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        
         {/* Bio Section */}
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
