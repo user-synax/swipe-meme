@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
 import FriendCard from '@/components/friends/FriendCard';
 import FriendSearch from '@/components/friends/FriendSearch';
+import { authenticatedFetch } from '@/lib/api';
 
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
@@ -19,7 +20,7 @@ export default function FriendsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['friends'],
     queryFn: async () => {
-      const res = await fetch('/api/friends/list');
+      const res = await authenticatedFetch('/api/friends/list');
       if (!res.ok) throw new Error('Failed to fetch friends');
       return res.json();
     }
@@ -28,7 +29,7 @@ export default function FriendsPage() {
   const { data: requestsData } = useQuery({
     queryKey: ['friend-requests'],
     queryFn: async () => {
-      const res = await fetch('/api/friends/requests');
+      const res = await authenticatedFetch('/api/friends/requests');
       if (!res.ok) throw new Error('Failed to fetch requests');
       return res.json();
     }
@@ -36,9 +37,8 @@ export default function FriendsPage() {
 
   const unlockMutation = useMutation({
     mutationFn: async (friendId) => {
-      const res = await fetch('/api/friends/unlock', {
+      const res = await authenticatedFetch('/api/friends/unlock', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ friendId })
       });
       if (!res.ok) throw new Error('Failed to unlock');
@@ -51,9 +51,8 @@ export default function FriendsPage() {
 
   const removeMutation = useMutation({
     mutationFn: async (friendId) => {
-      const res = await fetch('/api/friends/remove', {
+      const res = await authenticatedFetch('/api/friends/remove', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ friendId })
       });
       if (!res.ok) throw new Error('Failed to remove friend');
