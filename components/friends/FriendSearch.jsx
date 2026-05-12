@@ -8,6 +8,7 @@ import { Search, UserPlus, UserCheck, Clock, X } from 'lucide-react';
 import { toast } from '@/store/useToastStore';
 import dynamic from 'next/dynamic';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
+import { authenticatedFetch } from '@/lib/api';
 
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
@@ -19,30 +20,50 @@ export default function FriendSearch({ onClose }) {
 
   const searchMutation = useMutation({
     mutationFn: async (searchQuery) => {
-      const res = await fetch('/api/friends/search', {
+      const res = await authenticatedFetch('/api/friends/search', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery })
       });
-      if (!res.ok) throw new Error('Search failed');
+      
+      if (res.status === 401) {
+        throw new Error('You need to be logged in to search for friends');
+      }
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Search failed');
+      }
+      
       return res.json();
     },
     onSuccess: (data) => {
       setResults(data.users || []);
     },
-    onError: () => {
-      toast.error('Search failed');
+    onError: (err) => {
+      if (err.message.includes('logged in')) {
+        toast.error('Please log in to search for friends');
+      } else {
+        toast.error(err.message || 'Search failed');
+      }
     }
   });
 
   const sendRequestMutation = useMutation({
     mutationFn: async (username) => {
-      const res = await fetch('/api/friends/request', {
+      const res = await authenticatedFetch('/api/friends/request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
       });
-      if (!res.ok) throw new Error('Failed to send request');
+      
+      if (res.status === 401) {
+        throw new Error('You need to be logged in to send friend requests');
+      }
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to send request');
+      }
+      
       return res.json();
     },
     onSuccess: () => {
@@ -52,7 +73,11 @@ export default function FriendSearch({ onClose }) {
       searchMutation.mutate(query);
     },
     onError: (err) => {
-      toast.error(err.message || 'Failed to send request');
+      if (err.message.includes('logged in')) {
+        toast.error('Please log in to send friend requests');
+      } else {
+        toast.error(err.message || 'Failed to send request');
+      }
     }
   });
 
