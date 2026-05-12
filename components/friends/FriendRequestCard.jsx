@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Check, X } from 'lucide-react';
 import { toast } from '@/store/useToastStore';
+import { authenticatedFetch } from '@/lib/api';
 
 export default function FriendRequestCard({ request, type }) {
   const queryClient = useQueryClient();
@@ -11,9 +12,8 @@ export default function FriendRequestCard({ request, type }) {
 
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/friends/accept', {
+      const res = await authenticatedFetch('/api/friends/accept', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestId: request._id })
       });
       if (!res.ok) throw new Error('Failed to accept');
@@ -31,9 +31,8 @@ export default function FriendRequestCard({ request, type }) {
 
   const rejectMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/friends/reject', {
+      const res = await authenticatedFetch('/api/friends/reject', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestId: request._id })
       });
       if (!res.ok) throw new Error('Failed to reject');
