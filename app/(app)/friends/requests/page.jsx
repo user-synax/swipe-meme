@@ -7,6 +7,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Skeleton from '@/components/ui/skeleton/Skeleton';
 import FriendRequestCard from '@/components/friends/FriendRequestCard';
+import { authenticatedFetch } from '@/lib/api';
 
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
@@ -14,7 +15,7 @@ export default function FriendRequestsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['friend-requests'],
     queryFn: async () => {
-      const res = await fetch('/api/friends/requests');
+      const res = await authenticatedFetch('/api/friends/requests');
       if (!res.ok) throw new Error('Failed to fetch requests');
       return res.json();
     }
