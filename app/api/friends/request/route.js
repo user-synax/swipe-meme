@@ -21,8 +21,13 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-    // Find the user to send request to
-    const recipient = await User.findOne({ username: username.toLowerCase().trim() });
+    // Find the user to send request to (case-insensitive exact match)
+    const recipient = await User.findOne({ 
+      username: { 
+        $regex: `^${username.toLowerCase().trim()}$`, 
+        $options: 'i' 
+      } 
+    });
     
     if (!recipient) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
