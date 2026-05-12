@@ -1,17 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, User as UserIcon, MessageSquare, Send, UserMinus } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { authenticatedFetch } from '@/lib/api';
 
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
 export default function FriendCard({ friend, onUnlock, isUnlocking, onRemove }) {
   const { user, chatUnlocked, sharedMemeCount } = friend;
   const [isFlipped, setIsFlipped] = useState(false);
+  const [isFindingMatch, setIsFindingMatch] = useState(false);
+  const router = useRouter();
 
   const displayUsername = chatUnlocked
     ? user.username
@@ -21,6 +25,29 @@ export default function FriendCard({ friend, onUnlock, isUnlocking, onRemove }) 
     await onUnlock();
     setIsFlipped(true);
     setTimeout(() => setIsFlipped(false), 2000);
+  };
+
+  const handleChat = async () => {
+    setIsFindingMatch(true);
+    try {
+      const res = await authenticatedFetch('/api/match/find', {
+        method: 'POST',
+        body: JSON.stringify({ friendId: user._id })
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to find match');
+      }
+      
+      const data = await res.json();
+      router.push(`/chat/${data.matchId}`);
+    } catch (error) {
+      console.error('Error finding match:', error);
+      // Fallback: try to create a match or show error
+      alert('Could not find chat match. Please try again.');
+    } finally {
+      setIsFindingMatch(false);
+    }
   };
 
   return (
@@ -60,12 +87,14 @@ export default function FriendCard({ friend, onUnlock, isUnlocking, onRemove }) 
         <div className="pt-2 space-y-2">
           {chatUnlocked ? (
             <>
-              <Link href={`/chat/friend/${friend._id}`}>
-                <Button className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95">
-                  <MessageSquare size={14} className="mr-1.5" />
-                  Chat
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleChat}
+                disabled={isFindingMatch}
+                className="w-full text-[11px] font-bold h-8 rounded-lg bg-primary hover:bg-primary/90 text-white shadow-sm transition-all active:scale-95"
+              >
+                <MessageSquare size={14} className="mr-1.5" />
+                {isFindingMatch ? 'Finding...' : 'Chat'}
+              </Button>
               <Link href={`/user/${user._id}`}>
                 <Button variant="outline" className="w-full text-[11px] font-bold h-8 rounded-lg border-border hover:bg-muted transition-colors">
                   <Send size={14} className="mr-1.5" />
